@@ -1,4 +1,4 @@
-# DesignMate AI MVP Scaffold
+# DesignMate AI 
 
 This scaffold turns the project proposal into a practical MVP for today's session.
 
