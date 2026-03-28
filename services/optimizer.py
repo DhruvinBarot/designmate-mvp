@@ -15,9 +15,9 @@ STYLE_WEIGHTS = {
 
 def _item_score(item: FurnitureItem, target_style: str, preferred_colors: List[str], budget: float) -> float:
     score = 0.0
-    if item.style == target_style:
+    if target_style in item.style_tags:
         score += STYLE_WEIGHTS["exact_style"]
-    if preferred_colors and item.color in preferred_colors:
+    if preferred_colors and any(c in preferred_colors for c in item.colors):
         score += STYLE_WEIGHTS["color_match"]
     score += max(0.1, 1 - (item.price / max(budget, 1))) * STYLE_WEIGHTS["affordability"]
     return score

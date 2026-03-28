@@ -25,8 +25,8 @@ def shortlist_candidates(
     shortlisted = [item for item in items if item.category in categories]
 
     def score(item: FurnitureItem) -> tuple:
-        style_match = 1 if item.style == style else 0
-        color_match = 1 if (not colors or item.color in colors) else 0
+        style_match = 1 if style in item.style_tags else 0
+        color_match = 1 if (not colors or any(c in item.colors for c in colors)) else 0
         return (style_match, color_match, -item.price)
 
     shortlisted.sort(key=score, reverse=True)
