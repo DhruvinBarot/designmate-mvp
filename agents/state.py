@@ -14,19 +14,26 @@ class RoomInput(BaseModel):
     colors: List[str] = Field(default_factory=list)
     notes: str = ""
     image_path: Optional[str] = None
+    # Refinement fields
+    avoid_colors: List[str] = Field(default_factory=list)
+    exclude_retailers: List[str] = Field(default_factory=list)
+    must_have_categories: List[str] = Field(default_factory=list)
+    refinement_notes: str = ""
 
 
 class FurnitureItem(BaseModel):
     id: str
     category: str
     name: str
-    style: str
-    color: str
     price: float
-    width_ft: float
-    depth_ft: float
     retailer: str
-    url: str = "#"
+    product_url: Optional[str] = None
+    image_url: Optional[str] = None
+    style_tags: List[str] = Field(default_factory=list)
+    colors: List[str] = Field(default_factory=list)
+    width_in: float
+    depth_in: float
+    height_in: Optional[float] = None
 
 
 class DesignOption(BaseModel):

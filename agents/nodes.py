@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
-from agents.state import DesignOption, DesignState, FurnitureItem
-from services.catalog import load_catalog, shortlist_candidates
+from agents.state import DesignState
 from services.optimizer import build_initial_options
+from services.providers.registry import get_product_provider
 
 
 def analyze_room(state: DesignState) -> DesignState:
@@ -12,9 +10,9 @@ def analyze_room(state: DesignState) -> DesignState:
     area = request.width_ft * request.length_ft
 
     category_map = {
-        "living_room": ["sofa", "coffee_table", "rug", "lamp"],
-        "bedroom": ["bed", "nightstand", "rug", "lamp"],
-        "office": ["desk", "chair", "shelf", "lamp"],
+        "living_room": ["sofa", "coffee_table", "rug", "floor_lamp"],
+        "bedroom": ["bed", "nightstand", "rug", "floor_lamp"],
+        "office": ["desk", "desk_chair", "bookshelf", "floor_lamp"],
     }
 
     room_analysis = {
@@ -31,7 +29,7 @@ def analyze_room(state: DesignState) -> DesignState:
     return {
         **state,
         "room_analysis": room_analysis,
-        "required_categories": category_map.get(request.room_type, ["lamp", "rug"]),
+        "required_categories": category_map.get(request.room_type, ["floor_lamp", "rug"]),
         "debug": [f"Analyzed {request.room_type} with {area:.1f} sqft."],
     }
 
@@ -39,14 +37,15 @@ def analyze_room(state: DesignState) -> DesignState:
 def retrieve_candidates(state: DesignState) -> DesignState:
     request = state["request"]
     required_categories = state["required_categories"]
-    catalog = load_catalog()
-    candidates = shortlist_candidates(
-        items=catalog,
-        categories=required_categories,
-        style=request.style,
-        colors=request.colors,
-    )
 
+    provider = get_product_provider()
+    candidates = provider.search(
+    categories=required_categories,
+    style=request.style,
+    colors=request.colors,
+    avoid_colors=request.avoid_colors,
+    exclude_retailers=request.exclude_retailers,
+    )
     debug = state.get("debug", []) + [f"Retrieved {len(candidates)} candidate products."]
     return {**state, "candidates": candidates, "debug": debug}
 

@@ -19,6 +19,31 @@ with st.sidebar:
     colors = st.multiselect("Preferred colors", ["white", "black", "brown", "beige", "green", "blue", "gray"], default=["beige", "brown"])
     notes = st.text_area("Notes", placeholder="Need cozy seating, lots of light, renter-friendly...")
     uploaded = st.file_uploader("Room photo (optional for now)", type=["png", "jpg", "jpeg"])
+
+    st.divider()
+    st.header("Refinement Inputs")
+
+    adjust_budget = st.checkbox("Adjust budget")
+    if adjust_budget:
+        budget = st.number_input("Revised budget ($)", min_value=200, max_value=10000, value=int(budget), step=100)
+
+    avoid_colors = st.multiselect(
+        "Avoid colors",
+        ["white", "black", "brown", "beige", "green", "blue", "gray"],
+    )
+    must_have_categories = st.multiselect(
+        "Must-have categories",
+        ["sofa", "coffee_table", "rug", "floor_lamp", "bed", "nightstand", "desk", "desk_chair", "bookshelf"],
+    )
+    exclude_retailers = st.multiselect(
+        "Exclude retailers",
+        ["ikea", "amazon", "wayfair"],
+    )
+    refinement_notes = st.text_area(
+        "Refinement notes",
+        placeholder="e.g. Prefer items that ship fast, avoid anything too bulky...",
+    )
+
     run = st.button("Generate design options", type="primary")
 
 st.subheader("How this MVP maps to the proposal")
@@ -42,6 +67,10 @@ if run:
         colors=colors,
         notes=notes,
         image_path=uploaded.name if uploaded else None,
+        avoid_colors=avoid_colors,
+        exclude_retailers=exclude_retailers,
+        must_have_categories=must_have_categories,
+        refinement_notes=refinement_notes,
     )
 
     graph = build_graph()
